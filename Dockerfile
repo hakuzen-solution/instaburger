@@ -15,7 +15,7 @@ RUN corepack enable
 
 # --- Instalação de dependências (camada em cache) -------------------------
 COPY package.json yarn.lock .yarnrc.yml ./
-RUN yarn install --immutable
+RUN yarn install --no-immutable
 
 # --- Cópia do código e build ----------------------------------------------
 COPY . .
