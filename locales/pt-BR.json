@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "FoodTruck Pedidos",
+    "description": "Sistema de gerenciamento de pedidos"
+  },
+  "nav": {
+    "activeOrders": "Pedidos Ativos",
+    "newOrder": "Novo Pedido",
+    "history": "Histórico",
+    "products": "Produtos",
+    "categories": "Categorias",
+    "logout": "Sair"
+  },
+  "login": {
+    "title": "Acesso Administrativo",
+    "description": "Entre com suas credenciais para acessar o sistema",
+    "username": "Usuário",
+    "password": "Senha",
+    "submit": "Entrar",
+    "error": "Usuário ou senha inválidos",
+    "loading": "Entrando..."
+  },
+  "tracking": {
+    "title": "Acompanhe seu Pedido",
+    "description": "Digite o código de acompanhamento recebido no momento do pedido",
+    "placeholder": "Ex: 7F4K-92M",
+    "submit": "Acompanhar Pedido",
+    "notFound": "Pedido não encontrado. Verifique o código e tente novamente.",
+    "orderNumber": "Pedido",
+    "items": "Itens do Pedido",
+    "total": "Total",
+    "status": "Status"
+  },
+  "status": {
+    "NOVO": "Pedido recebido",
+    "PREPARANDO": "Pedido em preparo",
+    "PRONTO": "Pedido pronto!",
+    "CONCLUIDO": "Pedido entregue",
+    "CANCELADO": "Pedido cancelado"
+  },
+  "statusMessage": {
+    "NOVO": "Aguarde o início do preparo.",
+    "PREPARANDO": "Seu pedido está sendo preparado.",
+    "PRONTO": "Retire seu pedido no balcão.",
+    "CONCLUIDO": "Obrigado pela preferência!",
+    "CANCELADO": "Entre em contato com o atendente."
+  },
+  "orders": {
+    "active": "Pedidos Ativos",
+    "activeDescription": "Gerencie os pedidos em andamento",
+    "new": "Novo Pedido",
+    "newDescription": "Crie um novo pedido para o cliente",
+    "history": "Histórico de Pedidos",
+    "historyDescription": "Pedidos concluídos e cancelados",
+    "noActive": "Nenhum pedido ativo no momento",
+    "noHistory": "Nenhum pedido no histórico",
+    "startPrep": "Iniciar Preparo",
+    "markReady": "Marcar como Pronto",
+    "confirmDelivery": "Confirmar Entrega",
+    "cancel": "Cancelar",
+    "cancelConfirm": "Tem certeza que deseja cancelar este pedido?",
+    "cancelTitle": "Cancelar Pedido",
+    "cancelYes": "Sim, cancelar",
+    "cancelNo": "Não, manter",
+    "created": "Pedido criado com sucesso!",
+    "trackingCode": "Código de Acompanhamento",
+    "showQR": "Mostrar QR Code",
+    "confirmOrder": "Confirmar Pedido",
+    "emptyCart": "Adicione itens ao pedido",
+    "total": "Total",
+    "summary": "Resumo do Pedido",
+    "quantity": "Qtd"
+  },
+  "products": {
+    "title": "Produtos",
+    "description": "Gerencie os produtos do cardápio",
+    "add": "Adicionar Produto",
+    "edit": "Editar Produto",
+    "name": "Nome",
+    "productDescription": "Descrição",
+    "price": "Preço (¥)",
+    "category": "Categoria",
+    "order": "Ordem",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "noProducts": "Nenhum produto cadastrado"
+  },
+  "categories": {
+    "title": "Categorias",
+    "description": "Gerencie as categorias do cardápio",
+    "add": "Adicionar Categoria",
+    "edit": "Editar Categoria",
+    "name": "Nome",
+    "order": "Ordem",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "noCategories": "Nenhuma categoria cadastrada"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro. Tente novamente.",
+    "success": "Operação realizada com sucesso!",
+    "confirm": "Confirmar",
+    "back": "Voltar",
+    "close": "Fechar"
+  }
+}

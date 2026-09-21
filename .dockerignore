@@ -1,0 +1,12 @@
+node_modules
+.next
+.build
+out
+dist
+.git
+.env
+.env.local
+*.log
+.DS_Store
+tsconfig.tsbuildinfo
+README_RAILWAY.md
