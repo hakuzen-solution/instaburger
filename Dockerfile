@@ -21,6 +21,7 @@ RUN yarn install --no-immutable
 COPY . .
 
 # Gera o Prisma Client e compila a aplicação
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
 RUN yarn prisma generate \
  && yarn build
 
