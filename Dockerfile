@@ -31,4 +31,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Aplica o schema ao banco (idempotente) e inicia o servidor
-CMD ["sh", "-c", "yarn prisma db push --skip-generate --accept-data-loss && yarn start -p $PORT -H 0.0.0.0"]
+CMD ["sh", "-c", "yarn prisma db push --skip-generate --accept-data-loss && yarn start -p ${PORT:-3000} -H 0.0.0.0"]
