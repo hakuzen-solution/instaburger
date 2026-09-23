@@ -19,6 +19,9 @@ dist/
 .env.local
 .env.*.local
 
+# Backups do banco de dados (contêm dados reais de produção)
+backups/
+
 # Logs
 *.log
 npm-debug.log*
