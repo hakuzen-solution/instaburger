@@ -30,5 +30,5 @@ ENV NODE_ENV=production
 # O Railway injeta a porta via variável PORT; o Next.js a respeita automaticamente
 EXPOSE 3000
 
-# Aplica o schema ao banco (idempotente) e inicia o servidor
-CMD ["sh", "-c", "yarn prisma db push --skip-generate --accept-data-loss && yarn start -p ${PORT:-3000} -H 0.0.0.0"]
+# Aplica migrations pendentes (nunca perde dados) e inicia o servidor
+CMD ["sh", "-c", "yarn prisma migrate deploy && yarn start -p ${PORT:-3000} -H 0.0.0.0"]
