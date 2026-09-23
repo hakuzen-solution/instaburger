@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/db"
+import { rateLimit, getClientIp } from "@/lib/rate-limit"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
@@ -17,10 +18,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Senha", type: "password" },
         email: { label: "Email", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const identifier = String(credentials?.username || credentials?.email || '')
         const pwd = String(credentials?.password || '')
         if (!identifier || !pwd) return null
+
+        const ip = getClientIp(request)
+        // 5 tentativas de login por IP a cada 15 minutos
+        const { allowed } = rateLimit(`login:${ip}`, 5, 15 * 60 * 1000)
+        if (!allowed) return null
 
         const user = await prisma.user.findUnique({
           where: { email: identifier }
