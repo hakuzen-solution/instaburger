@@ -1,9 +1,13 @@
 export const dynamic = "force-dynamic"
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
+import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
 
 export async function POST(req: Request) {
+  const { unauthorized } = await requireAdminSession()
+  if (unauthorized) return unauthorized
+
   try {
     const { email, password, name } = await req.json()
 

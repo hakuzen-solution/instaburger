@@ -1,14 +1,12 @@
 export const dynamic = "force-dynamic"
 import { NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
 import { formatOrderNumber } from "@/lib/tracking"
 
 export async function GET(request: Request) {
-  const session = await auth()
-  if (!session?.user) {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
-  }
+  const { unauthorized } = await requireAdminSession()
+  if (unauthorized) return unauthorized
 
   try {
     const { searchParams } = new URL(request.url)
