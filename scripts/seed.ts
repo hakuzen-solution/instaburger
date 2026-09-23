@@ -6,31 +6,31 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Seeding database...')
 
-  // Hidden test account (NEVER expose these credentials)
-  const testPasswordHash = await bcrypt.hash('gN@7i5pMpX', 10)
-  await prisma.user.upsert({
-    where: { email: 'abacus-94b48a2a@example.com' },
-    update: { password: testPasswordHash },
-    create: {
-      email: 'abacus-94b48a2a@example.com',
-      name: 'Test Admin',
-      password: testPasswordHash,
-      role: 'admin',
-    },
-  })
-
-  // User-requested admin account: username "admin", password "admin123"
-  const adminPasswordHash = await bcrypt.hash('admin123', 10)
-  await prisma.user.upsert({
-    where: { email: 'admin' },
-    update: { password: adminPasswordHash },
-    create: {
-      email: 'admin',
-      name: 'Administrador',
-      password: adminPasswordHash,
-      role: 'admin',
-    },
-  })
+  // Cria o admin inicial apenas se ainda não existir nenhuma conta admin.
+  // Nunca sobrescreve a senha de um usuário já existente (evita resetar
+  // silenciosamente a senha de produção ao rodar o seed de novo).
+  const existingAdmin = await prisma.user.findFirst({ where: { role: 'admin' } })
+  if (!existingAdmin) {
+    const seedEmail = process.env.SEED_ADMIN_EMAIL
+    const seedPassword = process.env.SEED_ADMIN_PASSWORD
+    if (!seedEmail || !seedPassword) {
+      throw new Error(
+        'Nenhum admin encontrado. Defina SEED_ADMIN_EMAIL e SEED_ADMIN_PASSWORD no ambiente para criar o admin inicial.'
+      )
+    }
+    const adminPasswordHash = await bcrypt.hash(seedPassword, 10)
+    await prisma.user.create({
+      data: {
+        email: seedEmail,
+        name: 'Administrador',
+        password: adminPasswordHash,
+        role: 'admin',
+      },
+    })
+    console.log(`Admin inicial criado: ${seedEmail}`)
+  } else {
+    console.log('Admin já existe, senha não foi alterada.')
+  }
 
   // Categories
   const hamburgueres = await prisma.category.upsert({
