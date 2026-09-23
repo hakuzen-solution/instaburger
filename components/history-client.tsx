@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { History, Loader2, CalendarDays, X } from "lucide-react"
+import { History, Loader2, CalendarDays, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { SafeDate, SafeTime } from "@/components/safe-format"
 
 function toInputDate(d: Date) {
@@ -42,6 +42,9 @@ export function HistoryClient() {
   const [loading, setLoading] = useState(true)
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const pageSize = 20
 
   const fetchHistory = useCallback(async () => {
     setLoading(true)
@@ -49,22 +52,28 @@ export function HistoryClient() {
       const params = new URLSearchParams()
       if (from) params.set("from", from)
       if (to) params.set("to", to)
-      const qs = params.toString()
-      const res = await fetch(`/api/orders/history${qs ? `?${qs}` : ""}`)
+      params.set("page", String(page))
+      params.set("pageSize", String(pageSize))
+      const res = await fetch(`/api/orders/history?${params.toString()}`)
       if (res.ok) {
         const data = await res.json()
-        setOrders(data ?? [])
+        setOrders(data?.orders ?? [])
+        setTotalPages(data?.totalPages ?? 1)
       }
     } catch (err: any) {
       console.error("Fetch history error:", err)
     } finally {
       setLoading(false)
     }
-  }, [from, to])
+  }, [from, to, page])
 
   useEffect(() => {
     fetchHistory()
   }, [fetchHistory])
+
+  useEffect(() => {
+    setPage(1)
+  }, [from, to])
 
   const setToday = () => {
     const d = toInputDate(new Date())
@@ -202,6 +211,32 @@ export function HistoryClient() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {!loading && (orders?.length ?? 0) > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" /> Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Página {page} de {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="gap-1"
+          >
+            Próxima <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>

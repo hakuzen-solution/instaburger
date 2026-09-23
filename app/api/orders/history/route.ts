@@ -13,6 +13,13 @@ export async function GET(request: Request) {
     const from = searchParams.get("from")
     const to = searchParams.get("to")
 
+    const pageParam = parseInt(searchParams.get("page") ?? "1", 10)
+    const pageSizeParam = parseInt(searchParams.get("pageSize") ?? "20", 10)
+    const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1
+    const pageSize = Number.isFinite(pageSizeParam) && pageSizeParam > 0
+      ? Math.min(pageSizeParam, 100)
+      : 20
+
     const createdAtFilter: { gte?: Date; lte?: Date } = {}
     if (from) {
       const start = new Date(from)
@@ -29,24 +36,30 @@ export async function GET(request: Request) {
       }
     }
 
-    const orders = await prisma.order.findMany({
-      where: {
-        status: { in: ["CONCLUIDO", "CANCELADO"] },
-        ...(createdAtFilter.gte || createdAtFilter.lte ? { createdAt: createdAtFilter } : {}),
-      },
-      include: {
-        items: {
-          select: {
-            productNameSnapshot: true,
-            unitPrice: true,
-            quantity: true,
-            subtotal: true,
+    const where = {
+      status: { in: ["CONCLUIDO", "CANCELADO"] },
+      ...(createdAtFilter.gte || createdAtFilter.lte ? { createdAt: createdAtFilter } : {}),
+    }
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        include: {
+          items: {
+            select: {
+              productNameSnapshot: true,
+              unitPrice: true,
+              quantity: true,
+              subtotal: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 100,
-    })
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.order.count({ where }),
+    ])
 
     const result = (orders ?? []).map((o: any) => ({
       id: o?.id,
@@ -60,7 +73,13 @@ export async function GET(request: Request) {
       completedAt: o?.completedAt?.toISOString?.() ?? null,
     }))
 
-    return NextResponse.json(result)
+    return NextResponse.json({
+      orders: result,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    })
   } catch (error: any) {
     console.error("History error:", error)
     return NextResponse.json({ error: "Erro ao buscar histórico" }, { status: 500 })
