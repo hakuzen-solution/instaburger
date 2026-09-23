@@ -36,7 +36,7 @@ export async function PATCH(
     // Rebuild items from current products
     const productIds = items.map((i: any) => i?.productId).filter(Boolean)
     const products = await prisma.product.findMany({ where: { id: { in: productIds } } })
-    const productMap = new Map(products.map((p: any) => [p.id, p]))
+    const productMap = new Map(products.map((p) => [p.id, p] as const))
 
     let totalAmount = 0
     const orderItems = items.map((item: any) => {

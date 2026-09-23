@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } },
     })
-    const productMap = new Map(products.map((p: any) => [p.id, p]))
+    const productMap = new Map(products.map((p) => [p.id, p] as const))
 
     // Calculate total and build order items
     let totalAmount = 0
