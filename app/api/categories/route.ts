@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 import { NextResponse } from "next/server"
 import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
+import { categoryCreateSchema, firstValidationError } from "@/lib/validation"
 
 export async function GET(req: Request) {
   try {
@@ -24,12 +25,17 @@ export async function POST(req: Request) {
   if (unauthorized) return unauthorized
 
   try {
-    const data = await req.json()
+    const parsed = categoryCreateSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstValidationError(parsed.error) }, { status: 400 })
+    }
+    const data = parsed.data
+
     const category = await prisma.category.create({
       data: {
-        name: data?.name ?? '',
-        active: data?.active !== false,
-        displayOrder: Number(data?.displayOrder ?? 0),
+        name: data.name,
+        active: data.active ?? true,
+        displayOrder: data.displayOrder ?? 0,
       },
     })
     return NextResponse.json(category, { status: 201 })

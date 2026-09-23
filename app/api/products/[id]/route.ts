@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 import { NextResponse } from "next/server"
 import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
+import { productUpdateSchema, firstValidationError } from "@/lib/validation"
 
 export async function PATCH(
   req: Request,
@@ -12,14 +13,18 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const data = await req.json()
+    const parsed = productUpdateSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstValidationError(parsed.error) }, { status: 400 })
+    }
+    const data = parsed.data
     const updateData: any = {}
-    if (data?.name !== undefined) updateData.name = data.name
-    if (data?.description !== undefined) updateData.description = data.description
-    if (data?.price !== undefined) updateData.price = Number(data.price)
-    if (data?.categoryId !== undefined) updateData.categoryId = data.categoryId
-    if (data?.active !== undefined) updateData.active = data.active
-    if (data?.displayOrder !== undefined) updateData.displayOrder = Number(data.displayOrder)
+    if (data.name !== undefined) updateData.name = data.name
+    if (data.description !== undefined) updateData.description = data.description
+    if (data.price !== undefined) updateData.price = data.price
+    if (data.categoryId !== undefined) updateData.categoryId = data.categoryId
+    if (data.active !== undefined) updateData.active = data.active
+    if (data.displayOrder !== undefined) updateData.displayOrder = data.displayOrder
 
     const product = await prisma.product.update({
       where: { id },

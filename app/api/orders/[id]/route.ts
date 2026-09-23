@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
 import { formatOrderNumber } from "@/lib/tracking"
+import { orderWriteSchema, firstValidationError } from "@/lib/validation"
 
 // Edit an order's items and/or notes (only while NOVO or PREPARANDO)
 export async function PATCH(
@@ -14,7 +15,11 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const { items, notes } = await req.json()
+    const parsed = orderWriteSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstValidationError(parsed.error) }, { status: 400 })
+    }
+    const { items, notes } = parsed.data
 
     const order = await prisma.order.findUnique({ where: { id } })
     if (!order) {
@@ -26,10 +31,6 @@ export async function PATCH(
         { error: "Só é possível editar pedidos em preparo ou novos" },
         { status: 400 }
       )
-    }
-
-    if (!items?.length) {
-      return NextResponse.json({ error: "O pedido deve ter ao menos um item" }, { status: 400 })
     }
 
     // Rebuild items from current products
@@ -82,6 +83,6 @@ export async function PATCH(
     })
   } catch (error: any) {
     console.error("Edit order error:", error)
-    return NextResponse.json({ error: error?.message ?? "Erro ao editar pedido" }, { status: 500 })
+    return NextResponse.json({ error: "Erro ao editar pedido" }, { status: 500 })
   }
 }

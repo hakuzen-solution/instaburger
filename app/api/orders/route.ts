@@ -3,16 +3,18 @@ import { NextResponse } from "next/server"
 import { requireAdminSession } from "@/lib/require-admin-session"
 import { prisma } from "@/lib/db"
 import { generateTrackingCode, getNextOrderNumber, formatOrderNumber } from "@/lib/tracking"
+import { orderWriteSchema, firstValidationError } from "@/lib/validation"
 
 export async function POST(req: Request) {
   const { unauthorized } = await requireAdminSession()
   if (unauthorized) return unauthorized
 
   try {
-    const { items, notes } = await req.json()
-    if (!items?.length) {
-      return NextResponse.json({ error: "Adicione itens ao pedido" }, { status: 400 })
+    const parsed = orderWriteSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstValidationError(parsed.error) }, { status: 400 })
     }
+    const { items, notes } = parsed.data
 
     // Get products
     const productIds = items.map((i: any) => i?.productId).filter(Boolean)
@@ -73,6 +75,6 @@ export async function POST(req: Request) {
     }, { status: 201 })
   } catch (error: any) {
     console.error("Create order error:", error)
-    return NextResponse.json({ error: error?.message ?? "Erro ao criar pedido" }, { status: 500 })
+    return NextResponse.json({ error: "Erro ao criar pedido" }, { status: 500 })
   }
 }
