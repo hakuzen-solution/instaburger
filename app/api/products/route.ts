@@ -9,6 +9,11 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const activeOnly = searchParams.get("active") === "true"
 
+    if (!activeOnly) {
+      const { unauthorized } = await requireAdminSession()
+      if (unauthorized) return unauthorized
+    }
+
     const products = await prisma.product.findMany({
       where: activeOnly ? { active: true } : undefined,
       include: { category: { select: { id: true, name: true } } },
