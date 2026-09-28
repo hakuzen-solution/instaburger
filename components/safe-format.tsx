@@ -13,7 +13,7 @@ import { useMounted } from '@/components/client-only'
  */
 
 const DEFAULT_LOCALE = 'en-US'
-const DEFAULT_TIME_ZONE = 'UTC'
+const DEFAULT_TIME_ZONE = 'Asia/Tokyo'
 
 type SafeDateProps = {
   date: Date | string | number
