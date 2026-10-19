@@ -18,9 +18,11 @@ interface QRCodeModalProps {
   orderNumber: string
   trackingCode: string
   totalAmount: number
+  mode?: "created" | "view"
 }
 
-export function QRCodeModal({ open, onClose, orderNumber, trackingCode, totalAmount }: QRCodeModalProps) {
+export function QRCodeModal({ open, onClose, orderNumber, trackingCode, totalAmount, mode = "created" }: QRCodeModalProps) {
+  const isCreated = mode === "created"
   const [copied, setCopied] = useState(false)
   const [showLargeQR, setShowLargeQR] = useState(false)
 
@@ -66,8 +68,12 @@ export function QRCodeModal({ open, onClose, orderNumber, trackingCode, totalAmo
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-center flex flex-col items-center gap-2">
-            <CheckCircle2 className="h-12 w-12 text-green-600" />
-            <span>Pedido Criado!</span>
+            {isCreated ? (
+              <CheckCircle2 className="h-12 w-12 text-green-600" />
+            ) : (
+              <QrCode className="h-12 w-12 text-primary" />
+            )}
+            <span>{isCreated ? "Pedido Criado!" : "QR Code do Pedido"}</span>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -107,7 +113,7 @@ export function QRCodeModal({ open, onClose, orderNumber, trackingCode, totalAmo
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={onClose} className="w-full">Novo Pedido</Button>
+          <Button onClick={onClose} className="w-full">{isCreated ? "Novo Pedido" : "Fechar"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

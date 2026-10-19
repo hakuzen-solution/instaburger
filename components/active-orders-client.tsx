@@ -15,9 +15,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { ClipboardList, Loader2, RefreshCw, Play, CheckCircle, Truck, XCircle, Pencil } from "lucide-react"
+import { ClipboardList, Loader2, RefreshCw, Play, CheckCircle, Truck, XCircle, Pencil, QrCode } from "lucide-react"
 import { toast } from "sonner"
 import { EditOrderModal } from "@/components/edit-order-modal"
+import { QRCodeModal } from "@/components/qr-code-modal"
 
 interface OrderItem {
   productId: string
@@ -55,6 +56,7 @@ export function ActiveOrdersClient() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState<string | null>(null)
   const [editing, setEditing] = useState<Order | null>(null)
+  const [qrOrder, setQrOrder] = useState<Order | null>(null)
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -209,6 +211,14 @@ export function ActiveOrdersClient() {
                 </div>
                 <div className="space-y-2">
                   {getActionButton(order)}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => setQrOrder(order)}
+                  >
+                    <QrCode className="h-4 w-4 mr-1" /> Gerar QR Code
+                  </Button>
                   {(order.status === "NOVO" || order.status === "PREPARANDO") && (
                     <Button
                       variant="outline"
@@ -273,6 +283,17 @@ export function ActiveOrdersClient() {
           }}
           onClose={() => setEditing(null)}
           onSaved={fetchOrders}
+        />
+      )}
+
+      {qrOrder && (
+        <QRCodeModal
+          open
+          mode="view"
+          onClose={() => setQrOrder(null)}
+          orderNumber={qrOrder.orderNumber}
+          trackingCode={qrOrder.trackingCode}
+          totalAmount={qrOrder.totalAmount}
         />
       )}
     </div>
