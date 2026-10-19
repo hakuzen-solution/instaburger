@@ -20,20 +20,16 @@ export async function GET(request: Request) {
       ? Math.min(pageSizeParam, 100)
       : 20
 
+    // O servidor roda em UTC; o "dia" do negócio é o dia no Japão (UTC+9)
+    const isDateOnly = (s: string | null): s is string => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s)
     const createdAtFilter: { gte?: Date; lte?: Date } = {}
-    if (from) {
-      const start = new Date(from)
-      if (!isNaN(start.getTime())) {
-        start.setHours(0, 0, 0, 0)
-        createdAtFilter.gte = start
-      }
+    if (isDateOnly(from)) {
+      const start = new Date(`${from}T00:00:00+09:00`)
+      if (!isNaN(start.getTime())) createdAtFilter.gte = start
     }
-    if (to) {
-      const end = new Date(to)
-      if (!isNaN(end.getTime())) {
-        end.setHours(23, 59, 59, 999)
-        createdAtFilter.lte = end
-      }
+    if (isDateOnly(to)) {
+      const end = new Date(`${to}T23:59:59.999+09:00`)
+      if (!isNaN(end.getTime())) createdAtFilter.lte = end
     }
 
     const where = {
