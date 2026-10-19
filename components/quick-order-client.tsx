@@ -39,6 +39,7 @@ export function QuickOrderClient() {
   const [createdOrder, setCreatedOrder] = useState<CreatedOrder | null>(null)
   const [showQR, setShowQR] = useState(false)
   const [notes, setNotes] = useState("")
+  const [customerName, setCustomerName] = useState("")
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -96,6 +97,7 @@ export function QuickOrderClient() {
         body: JSON.stringify({
           items: cart.map((i) => ({ productId: i.productId, quantity: i.quantity })),
           notes,
+          customerName,
         }),
       })
       if (res.ok) {
@@ -108,6 +110,7 @@ export function QuickOrderClient() {
         setShowQR(true)
         setCart([])
         setNotes("")
+        setCustomerName("")
         setCartOpen(false)
         toast.success("Pedido criado com sucesso!")
       } else {
@@ -312,6 +315,20 @@ export function QuickOrderClient() {
                 </div>
               ))}
               <div className="border-t pt-3 space-y-1.5">
+                <label htmlFor="quick-order-customer-name" className="text-sm font-medium">
+                  Nome do cliente <span className="text-muted-foreground font-normal">(opcional)</span>
+                </label>
+                <input
+                  id="quick-order-customer-name"
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  maxLength={100}
+                  placeholder="Ex.: Maria"
+                  className="w-full h-11 rounded-md border border-input bg-background px-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+              <div className="space-y-1.5">
                 <label htmlFor="quick-order-notes" className="text-sm font-medium">Observações</label>
                 <textarea
                   id="quick-order-notes"

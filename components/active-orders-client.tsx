@@ -35,6 +35,7 @@ interface Order {
   status: string
   totalAmount: number
   notes: string | null
+  customerName: string | null
   items: OrderItem[]
   createdAt: string | null
 }
@@ -188,6 +189,9 @@ export function ActiveOrdersClient() {
                     {STATUS_LABELS[order.status] ?? order.status}
                   </Badge>
                 </div>
+                {order.customerName && (
+                  <p className="text-base font-semibold break-words">{order.customerName}</p>
+                )}
                 <p className="text-xs text-muted-foreground font-mono">{order.trackingCode}</p>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">

@@ -27,6 +27,7 @@ const orderItemSchema = z.object({
 export const orderWriteSchema = z.object({
   items: z.array(orderItemSchema).min(1, "Adicione itens ao pedido"),
   notes: z.string().nullish(),
+  customerName: z.string().trim().max(100, "Nome deve ter no máximo 100 caracteres").nullish(),
 })
 
 export function firstValidationError(error: z.ZodError): string {

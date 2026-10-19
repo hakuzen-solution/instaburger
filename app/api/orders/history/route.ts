@@ -64,6 +64,7 @@ export async function GET(request: Request) {
       status: o?.status,
       totalAmount: o?.totalAmount,
       notes: o?.notes ?? null,
+      customerName: o?.customerName ?? null,
       items: o?.items ?? [],
       createdAt: o?.createdAt?.toISOString?.() ?? null,
       completedAt: o?.completedAt?.toISOString?.() ?? null,

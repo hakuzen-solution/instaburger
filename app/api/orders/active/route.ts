@@ -18,6 +18,7 @@ export async function GET() {
         status: true,
         totalAmount: true,
         notes: true,
+        customerName: true,
         createdAt: true,
         items: {
           select: {
@@ -39,6 +40,7 @@ export async function GET() {
       status: o?.status,
       totalAmount: o?.totalAmount,
       notes: o?.notes ?? null,
+      customerName: o?.customerName ?? null,
       items: o?.items ?? [],
       createdAt: o?.createdAt?.toISOString?.() ?? null,
     }))

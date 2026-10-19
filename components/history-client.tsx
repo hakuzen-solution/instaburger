@@ -27,6 +27,7 @@ interface Order {
   status: string
   totalAmount: number
   notes: string | null
+  customerName: string | null
   items: OrderItem[]
   createdAt: string | null
   completedAt: string | null
@@ -181,6 +182,9 @@ export function HistoryClient() {
                     <Badge className={STATUS_BADGE[order.status] ?? 'bg-gray-100 text-gray-700'}>
                       {order.status === "CONCLUIDO" ? "CONCLUÍDO" : "CANCELADO"}
                     </Badge>
+                    {order.customerName && (
+                      <span className="font-semibold break-words">{order.customerName}</span>
+                    )}
                   </div>
                   <div className="text-sm text-muted-foreground flex items-center gap-3">
                     {order.createdAt && (

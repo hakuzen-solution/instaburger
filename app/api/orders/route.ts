@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: firstValidationError(parsed.error) }, { status: 400 })
     }
-    const { items, notes } = parsed.data
+    const { items, notes, customerName } = parsed.data
 
     // Get products
     const productIds = items.map((i: any) => i?.productId).filter(Boolean)
@@ -58,6 +58,7 @@ export async function POST(req: Request) {
         status: "NOVO",
         totalAmount,
         notes: typeof notes === "string" && notes.trim() ? notes.trim().slice(0, 500) : null,
+        customerName: customerName || null,
         items: {
           create: orderItems,
         },
