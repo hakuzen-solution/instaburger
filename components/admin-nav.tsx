@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { Truck, ClipboardList, PlusCircle, History, UtensilsCrossed, FolderOpen, LogOut, Menu, X, Zap, Settings } from "lucide-react"
+import { Truck, ClipboardList, PlusCircle, History, UtensilsCrossed, FolderOpen, LogOut, Menu, X, Zap, Settings, Receipt } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -13,9 +13,10 @@ const NAV_ITEMS = [
   { href: "/admin/pedido-rapido", label: "Modo Rápido", icon: Zap },
   { href: "/admin/novo-pedido", label: "Novo Pedido", icon: PlusCircle },
   { href: "/admin/historico", label: "Histórico", icon: History },
+  { href: "/admin/fechamento", label: "Fechamento", icon: Receipt },
   { href: "/admin/produtos", label: "Produtos", icon: UtensilsCrossed },
   { href: "/admin/categorias", label: "Categorias", icon: FolderOpen },
-  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
+  { href: "/admin/configuracoes", label: "Configurações", icon: Settings, compact: true },
 ]
 
 export function AdminNav() {
@@ -34,12 +35,12 @@ export function AdminNav() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
-                <Link key={item.href} href={item.href}>
+                <Link key={item.href} href={item.href} title={item.label}>
                   <Button
                     variant={isActive ? "default" : "ghost"}
                     size="sm"
@@ -49,7 +50,7 @@ export function AdminNav() {
                     )}
                   >
                     <Icon className="h-4 w-4" />
-                    {item.label}
+                    {item.compact ? <span className="sr-only">{item.label}</span> : item.label}
                   </Button>
                 </Link>
               )
@@ -57,11 +58,12 @@ export function AdminNav() {
             <Button
               variant="ghost"
               size="sm"
+              title="Sair"
               onClick={() => signOut({ redirectTo: "/login" })}
               className="gap-1.5 text-sm text-muted-foreground hover:text-destructive"
             >
               <LogOut className="h-4 w-4" />
-              Sair
+              <span className="sr-only">Sair</span>
             </Button>
           </nav>
 
@@ -69,7 +71,7 @@ export function AdminNav() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="xl:hidden"
             onClick={() => setOpen(!open)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -78,7 +80,7 @@ export function AdminNav() {
 
         {/* Mobile nav */}
         {open && (
-          <nav className="md:hidden pb-4 space-y-1">
+          <nav className="xl:hidden pb-4 space-y-1">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
